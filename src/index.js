@@ -9,6 +9,8 @@ import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
 import { Pane } from "tweakpane";
 import _createBeamLight from './beam-light'
 import _createSpotLight from './spot-light'
+import floor from './floor'
+import _spine from './spine'
 const {
   Scene,
   WebGLRenderer,
@@ -34,13 +36,15 @@ class App {
     this._createDebugPanel();
     this._createCamera();
     this._createRenderer();
-    this._createPlane();
+    // this._createPlane();
     this._createBox();
     this._createShadedBox();
     this._createLight();
     console.log("Initialized",)
     _createSpotLight.bind(this)();
     _createBeamLight.bind(this)();
+    floor.bind(this)();
+    _spine.bind(this)();
     this._createClock();
     this._addListeners();
     this._createControls();
@@ -49,12 +53,15 @@ class App {
       this.renderer.setAnimationLoop(() => {
         this._update();
         this._render();
+        this._action()
       });
 
       console.log(this);
     });
   }
-
+  _action(cb){
+    cb&&cb()
+  }
   destroy() {
     this.renderer.dispose();
     this._removeListeners();
@@ -106,7 +113,7 @@ class App {
   }
 
   _createLight() {
-    this.pointLight = new PointLight(0xff0055, 500, 100, 2);
+    this.pointLight = new PointLight(0xffffff, 500, 100, 2);
     this.pointLight.position.set(0, 10, 0);
     this.scene.add(this.pointLight);
 
@@ -117,7 +124,7 @@ class App {
     const lightFolder = this.pane.addFolder({ title: "Light" });
 
     let params = {
-      color: { r: 255, g: 0, b: 85 },
+      color: { r: 255, g: 255, b: 255 },
     };
 
     lightFolder.addInput(this.pointLight, "visible", {
